@@ -1,0 +1,10 @@
+NAME: AUSTIN TURNER
+CLASS: CPE.401
+
+FOR THIS SUBMISSION, THE FILE INCLUDES:  server.py, and client.py.
+
+To run the server.py file, type:
+$ server.py [server_port_number]
+
+To run client.py, type:
+$ client.py [user_id] [server_IP] [server_port]
