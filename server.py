@@ -1,13 +1,17 @@
 import socket
 import sys
+import os
+
+execfile( os.getcwd() + "/StreamSocket.py" )
 
 server_port_number = sys.argv[1]
+server_ip_number = sys.argv[2]
 
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+server_socket = StreamSocket()
 
-server_socket.bind((socket.gethostname(),int(server_port_number)))
+server_socket.bind((server_ip_number, int(server_port_number)))
 
 while True:
-    data, addr = server_socket.recvfrom(1024)
-    print "Connection from", addr
-    server_port_number.sendto(data.upper(), addr)
+    data, addr = server_socket.rec()
+    
+    server_port_number.send(data.upper())
