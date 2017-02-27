@@ -14,7 +14,7 @@ client_socket = StreamSocket()
 
 client_socket.connect((server_IP, int(server_port)))
 
-sent = client_socket.ssock.sendall("TesTStRinG")
+sent = client_socket.ssock.send("TesTStRinG")
 
 if sent == 0:
     raise RunTimeError("Socket Connection Broken")
