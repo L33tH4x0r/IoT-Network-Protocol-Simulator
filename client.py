@@ -9,4 +9,12 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 client_socket.bind((socket.gethostname(),0))
 
-print "Great Success!!"
+print "using", s.getsocketname()
+
+server = (server_IP, server_port)
+
+s.sendto("TesTStRinG", server)
+
+data, addr = s.recfrom(1024)
+print "recieved", data, "from", addr
+s.close()
