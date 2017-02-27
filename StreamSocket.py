@@ -34,18 +34,18 @@ class StreamSocket:
         # let other side know you are done
         self.ssock.send("\0")
 
-    def rec(self):
+    def listen (self):
+        self.ssock.listen(self.MAX_SOCKET_NUMBER)
+
+    def accept(self):
+        return self.ssock.accept()
+
+    def rec(self, conn):
         # initialize msg buffer
         msg = []
         data = ""
-        # Start listening
-        self.ssock.listen(self.MAX_SOCKET_NUMBER)
         # Cycle through recieving stream
         while data != "\0":
-            # Accept data from socket
-            conn, addr = self.ssock.accept()
-            # print address received from
-            print "Recieved data from ", addr
             # Recieve data from socket
             data = conn.recv(1024)
             # check for socket connection loss
@@ -55,4 +55,4 @@ class StreamSocket:
             # add recieved data from socket
             msg.append(data)
         #return data received in one string
-        return ''.join(msg), addr
+        return ''.join(msg)

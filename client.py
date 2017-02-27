@@ -10,13 +10,16 @@ server_port = sys.argv[3]
 
 client_socket = StreamSocket()
 
-client_socket.bind((socket.gethostname(),0))
+# client_socket.bind((socket.gethostname(),0))
 
-client_socket.connect((server_IP, server_port))
+client_socket.connect((server_IP, int(server_port)))
 
-sent = client_socket.send("TesTStRinG")
+sent = client_socket.ssock.sendall("TesTStRinG")
+
 if sent == 0:
     raise RunTimeError("Socket Connection Broken")
-data, addr = client_socket.recfrom(1024)
-print "recieved", data, "from", addr
-client_socket.close()
+
+data = client_socket.ssock.recv(1024)
+
+print "recieved", data
+client_socket.ssock.close()

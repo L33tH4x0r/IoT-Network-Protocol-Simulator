@@ -11,7 +11,11 @@ server_socket = StreamSocket()
 
 server_socket.bind((server_ip_number, int(server_port_number)))
 
+server_socket.listen()
 while True:
-    data, addr = server_socket.rec()
-    
-    server_port_number.send(data.upper())
+    conn, addr = server_socket.accept()
+    print "Reciving connection from ", addr
+    data = conn.recv(1024)
+    print "Recieved", data
+
+    conn.send(data.upper())
