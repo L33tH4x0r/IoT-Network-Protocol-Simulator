@@ -9,8 +9,6 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 client_socket.bind((socket.gethostname(),0))
 
-print "using", client_socket.getsocketname()
-
 server = (server_IP, server_port)
 
 client_socket.sendto("TesTStRinG", server)
