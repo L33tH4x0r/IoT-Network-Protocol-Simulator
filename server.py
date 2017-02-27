@@ -8,6 +8,6 @@ server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 server_socket.bind((socket.gethostname(),int(server_port_number)))
 
 while True:
-    data, addr = s.recvfrom(1024)
+    data, addr = server_socket.recvfrom(1024)
     print "Connection from", addr
-    s.sendto(data.upper(), addr)
+    server_port_number.sendto(data.upper(), addr)
