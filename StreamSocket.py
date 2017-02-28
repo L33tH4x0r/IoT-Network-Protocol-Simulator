@@ -18,6 +18,15 @@ class StreamSocket:
         # initialize connection with input
         self.ssock.connect(addr)
 
+    def listen (self):
+        self.ssock.listen(self.MAX_SOCKET_NUMBER)
+
+    def accept(self):
+        return self.ssock.accept()
+
+    def close(self):
+        self.ssock.close()
+
     def send(self, msg):
         # Initialize sent counter
         totalsent = 0
@@ -33,12 +42,6 @@ class StreamSocket:
             totalsent = totalsent + sent
         # let other side know you are done
         self.ssock.send("\0")
-
-    def listen (self):
-        self.ssock.listen(self.MAX_SOCKET_NUMBER)
-
-    def accept(self):
-        return self.ssock.accept()
 
     def rec(self, conn):
         # initialize msg buffer
