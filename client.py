@@ -10,14 +10,12 @@ server_IP = sys.argv[2]
 server_port = sys.argv[3]
 # Create client
 client = Client(user_ID, server_IP, server_port)
-# Create test case
+# Register device with server
 sent = client.register()
 # Check if connection exists
 if sent == 0:
     raise RunTimeError("Socket Connection Broken")
-# recieve data from server
-data = client.client_socket.ssock.recv(1024)
-# print recieved data
-print "recieved", data
+# recieve ACK from server
+client.recieve_ack(client.client_socket.ssock.recv(1024))
 # close socket
 client.client_socket.close()

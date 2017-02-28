@@ -2,7 +2,9 @@ from uuid import getnode as get_mac
 import socket
 execfile( os.getcwd() + "/StreamSocket.py" )
 class Client:
-    def __init__(self, userID = "default_name", serverIP = "127.0.0.1", serverPort = "50000", mac = None, new_socket = None):
+    # Initializers / class modifiers ###########################################
+    def __init__(self, userID = "default_name", serverIP = "127.0.0.1",
+    serverPort = "50000", mac = None, new_socket = None):
         # Add socket to client
         if new_socket:
             self.client_socket = new_socket
@@ -21,7 +23,8 @@ class Client:
             self.mac = mac
         else:
             self.mac = get_mac()
-
+    # PROTOCOL MESSAGES ########################################################
+    ############################################################################
     def register(self):
         return self.client_socket.ssock.send("REGISTER " + self.userID + " " + str(self.mac) + " " + str(self.clientIP) + " " + str(self.clientPort))
 
