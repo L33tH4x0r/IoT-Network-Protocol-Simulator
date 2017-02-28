@@ -11,7 +11,7 @@ server_port = sys.argv[3]
 # Create client
 client = Client(user_ID, server_IP, server_port)
 # Create test case
-sent = client.client_socket.ssock.send("TesTStRinG")
+sent = client.register()
 # Check if connection exists
 if sent == 0:
     raise RunTimeError("Socket Connection Broken")

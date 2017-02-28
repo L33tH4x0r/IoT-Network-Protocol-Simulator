@@ -8,11 +8,11 @@ class Client:
             self.client_socket = new_socket
         else:
             self.client_socket = StreamSocket()
-        # Give client identity
-        self.userID = userID
-        self.clientIP = socket.gethostname()
         # Bind socket to current hostname
         self.client_socket.bind((socket.gethostname(),0))
+        # Give client identity
+        self.userID = userID
+        self.clientIP = self.client_socket.ssock.getsockname()[0]
         self.clientPort = self.client_socket.ssock.getsockname()[1]
         # Connect client to server
         self.client_socket.connect((server_IP, int(server_port)))
@@ -23,13 +23,13 @@ class Client:
             self.mac = get_mac()
 
     def register(self):
-        return "REGISTER ", self.userID, " ", self.mac, " ", self.clientIP, " ", self.clientPort
+        return self.client_socket.ssock.send("REGISTER " + self.userID + " " + str(self.mac) + " " + str(self.clientIP) + " " + str(self.clientPort))
 
     def deregister(self):
-        return "DEREGISTER ", self.userID, " ", self.mac
+        return self.client_socket.ssock.send("DEREGISTER " + self.userID + " " + self.mac)
 
     def query(self, code = 1, to_id = ""):
         if code == 1:
-            return "QUERY ", code, " ", self.userID, " ", to_id
+            return self.client_socket.ssock.send("QUERY " + code + " " + self.userID + " " + to_id)
         elif code == 2:
-            return "QUERY ", code, " ", self.userID
+            return self.client_socket.ssock.send("QUERY " + code + " " + self.userID)
