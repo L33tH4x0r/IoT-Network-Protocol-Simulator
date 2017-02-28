@@ -23,14 +23,16 @@ class Server:
         command = parsed_data[0]
         # check if register command
         if command == "REGISTER":
+            print "Looping through "
             # check for device already existing
             for client in self.clients:
                 # check if device id exists
                 if client.device_id == parsed_data [1]:
                     # check if it belongs to the device calling it
+                    print len(client.messages)
                     if client.mac_address == parsed_data[2]:
                         # Send a success
-                        return self.ack(conn, client.device_id, len(client.messages), client.get_time_in_str())
+                        return self.ack_w_msg_count(conn, client.device_id, len(client.messages), client.get_time_in_str())
                     else:
                         # Send a failure
                         return 0
@@ -41,14 +43,15 @@ class Server:
             #                                  device id,    mac address,     ip address,    port number
             self.clients.append(TrackedClients(parsed_data[1], parsed_data[2], parsed_data[3], parsed_data[4]))
             # send ack for register
-            return self.ack(conn, parsed_data[1])
+            print parsed_data[2]
+            return self.new_device_ack(conn, parsed_data[1])
 
-    def ack(self,conn, device_id, count = None, time = None):
-        if count:
-            message = "ACK 1 " + device_id + " " + str(count) + " " + time
-            print "Sent: ", message
-            return conn.send(message)
-        else:
-            message = "ACK 1 " + device_id
-            print "Sent: ", message
-            return conn.send("ACK 1 " + device_id)
+    def ack_w_msg_count(self, conn, device_id, count, time):
+        message = "ACK 1 " + device_id + " " + str(count) + " " + time
+        print "Sent: ", message
+        return conn.send(message)
+
+    def new_device_ack(self, conn, device_id):
+        message = "ACK 1 " + device_id
+        print "Sent: ", message
+        return conn.send(message)
