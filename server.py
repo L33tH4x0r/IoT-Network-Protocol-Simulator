@@ -15,7 +15,7 @@ while True:
     conn, addr = server.server_socket.accept()
     print "Reciving connection from ", addr
     # Recieve data from connection
-    data = conn.recv(1024)
-    print "Recieved", data
-    # return received data as uppercase string
-    conn.send(data.upper())
+    data = conn.recv(server.server_socket.MAX_BUFFER_LEN)
+    print "Recieved: ", data
+    # Input data into server
+    server.input_data(data, conn)
