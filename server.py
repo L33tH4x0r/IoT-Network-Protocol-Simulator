@@ -18,4 +18,7 @@ while True:
     data = conn.recv(server.server_socket.MAX_BUFFER_LEN)
     print "Recieved: ", data
     # Input data into server
-    server.input_data(data, conn)
+    sent = server.input_data(data, conn)
+    # check if send was successful
+    if sent == 0:
+        raise RuntimeError("ERROR: Message not sent")

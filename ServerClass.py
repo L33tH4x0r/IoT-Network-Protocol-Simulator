@@ -33,7 +33,9 @@ class Server:
             return self.register_device(conn, parsed_data[1], parsed_data[2], parsed_data[3], parsed_data[4])
 
     def send(self, conn, msg):
+        # Print the message thats being sent
         print "Sent: ", msg
+        # send message
         return conn.send(msg)
 
     # DATA MANAGEMENT ##########################################################
