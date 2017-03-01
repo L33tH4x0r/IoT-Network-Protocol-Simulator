@@ -4,8 +4,9 @@ execfile( os.getcwd() + "/StreamSocket.py" )
 class Client:
     # CLASS CONSTANTS ##########################################################
     ############################################################################
-    NO_MSG_CNT_ERROR = "ERROR: Malformed packet, valid number not in message count place"
-    ID_TAKEN_ERROR = "ERROR: device ID already taken, please use another"
+    NO_MSG_CNT_ERROR = "ERROR: Malformed packet, valid number not in message count place\n"
+    ID_TAKEN_ERROR = "ERROR: device ID already taken, please use another\n"
+    SERVER_ID_ERROR = "ERROR: wrong ID returned, should have gotten NACK\n"
 
     # CLASS MANAGERS ###########################################################
     ############################################################################
@@ -28,6 +29,7 @@ class Client:
         self.mac = get_mac()
         # create error log
         self.error_log = open('error.log', 'a')
+        self.error_log.close()
 
     # PROTOCOL MESSAGES ########################################################
     ############################################################################
@@ -62,37 +64,53 @@ class Client:
         print "Recieved: ", msg
         # parse msg
         parsed_msg = msg.split()
-        # check if ack was recieved
+        # check if ACK
         if parsed_msg[0] == "ACK":
             return self.receive_ack(parsed_msg)
+        # check if NACK
         elif parsed_msg[0] == "NACK":
             if parsed_msg[2] == self.userID:
                 print "\nID registered to different mac: ", parsed_msg[3]
+                return None
             else:
                 print "\nDuplicate registration, can only have one id for device: "
                 print "Device registered under: ", parsed_msg[2]
+                return None
 
     def receive_ack(self, msg):
         # Check status code
         if msg[1] == '1':
             # Check if the returned user id is correct
             if msg[2] == self.userID:
-                # Check if already registered
-                if len(msg) > 3:
-                    # check if new messages
-                    try:
-                        if int(msg[3]) > 0:
-                            print "\nAlready registered, server has ", int(msg[3]), " new messages"
-                            return self.getNewMessages()
-                        else:
-                            print "\nAlready registered, no new messages"
-                            return 0
-                    except:
-                        raise RuntimeError(self.NO_MSG_CNT_ERROR)
-                        return None
-                # Device was newly registered
-                else:
-                    print "\nSuccessfully registered with server"
-            # Device id already taken
+                return self.check_messages(msg)
+            # Device id already taken, error on server end
             else:
-                raise RuntimeError()
+                raise RuntimeError(self.SERVER_ID_ERROR)
+                self.write_to_log(self.SERVER_ID_ERROR)
+                return None
+
+    def check_messages(self, msg):
+        # Check if already registered
+        if len(msg) > 3:
+            # check if new messages
+            try:
+                if int(msg[3]) > 0:
+                    print "\nAlready registered, server has ", int(msg[3]), " new messages"
+                    return self.getNewMessages()
+                else:
+                    print "\nAlready registered, no new messages"
+                    return None
+            except:
+                raise RuntimeError(self.NO_MSG_CNT_ERROR)
+                self.write_to_log(self.NO_MSG_CNT_ERROR)
+                return None
+        # Device was newly registered
+        else:
+            print "\nSuccessfully registered with server"
+            return None
+    # ERROR HANDLING ###########################################################
+    ############################################################################
+    def write_to_log(self, msg):
+        self.error_log = open('error.log', 'a')
+        self.error_log.write(msg)
+        self.error_log.close
