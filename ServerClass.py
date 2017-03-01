@@ -32,6 +32,12 @@ class Server:
             # Run register message handling
             return self.register_device(conn, parsed_data[1], parsed_data[2], parsed_data[3], parsed_data[4])
 
+    def send(self, conn, msg):
+        print "Sent: ", msg
+        return conn.send(msg)
+
+    # DATA MANAGEMENT ##########################################################
+    ############################################################################
     def register_device(self, conn, device_id, mac_address, client_ip, client_port):
         # check for device already existing
         for client in self.clients:
@@ -55,10 +61,6 @@ class Server:
         self.clients.append(TrackedClients(device_id, mac_address, client_ip, client_port))
         # send ack for register
         return self.new_device_ack(conn, device_id)
-
-    def send(self, conn, msg):
-        print "Sent: ", msg
-        return conn.send(msg)
 
     # MESSAGES #################################################################
     ############################################################################
