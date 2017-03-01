@@ -25,7 +25,7 @@ class Client:
         # Connect client to server
         self.client_socket.connect((server_IP, int(server_port)))
         # Add MAC address of current machine
-        self.mac = get_mac()
+        self.mac = get_mac() + 1
         # create error log
         self.error_log = open('error.log', 'a')
 

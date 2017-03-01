@@ -3,6 +3,8 @@ import socket
 execfile( os.getcwd() + "/StreamSocket.py" )
 execfile(os.getcwd() + "/TrackedClients.py")
 class Server:
+    # CLASS MANAGERS ###########################################################
+    ############################################################################
     def __init__ (  self,
                     server_port,
                     server_IP,
@@ -18,6 +20,8 @@ class Server:
         # Open error log
         self.error_log = open('error.log', 'a')
 
+    # COMMUNICATION ############################################################
+    ############################################################################
     def input_data(self, data, conn):
         # parse data
         parsed_data = data.split()
@@ -25,19 +29,19 @@ class Server:
         command = parsed_data[0]
         # check if register command
         if command == "REGISTER":
-            print "Looping through "
+            print "Looping through"
             # check for device already existing
             for client in self.clients:
                 # check if device id exists
-                if client.device_id == parsed_data [1]:
+                if client.device_id == parsed_data[1]:
                     # check if it belongs to the device calling it
-                    print len(client.messages)
                     if client.mac_address == parsed_data[2]:
                         # Send a success
                         return self.ack_w_msg_count(conn, client.device_id, len(client.messages), client.get_time_in_str())
+                    # device id already registered to another mac address
                     else:
                         # Send a failure
-                        return 0
+                        return self.dup_nack(conn, client.device_id, client.mac_address)
             # Device id not found:
             #
             # Append new client to clients list with their:
@@ -48,12 +52,20 @@ class Server:
             print parsed_data[2]
             return self.new_device_ack(conn, parsed_data[1])
 
+    def send(self, conn, msg):
+        print "Sent: ", msg
+        return conn.send(msg)
+
+    # MESSAGES #################################################################
+    ############################################################################
     def ack_w_msg_count(self, conn, device_id, count, time):
-        message = "ACK 1 " + device_id + " " + str(count) + " " + time
-        print "Sent: ", message
-        return conn.send(message)
+        msg = "ACK 1 " + device_id + " " + str(count) + " " + time
+        return self.send(conn, msg)
 
     def new_device_ack(self, conn, device_id):
-        message = "ACK 1 " + device_id
-        print "Sent: ", message
-        return conn.send(message)
+        msg = "ACK 1 " + device_id
+        return self.send(conn, msg)
+
+    def dup_nack(self, conn, device_id, mac_address):
+        msg = "NACK 1 " + device_id + " " + mac_address
+        return self.send(conn, msg)
