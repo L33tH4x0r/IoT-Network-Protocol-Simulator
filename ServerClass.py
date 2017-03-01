@@ -29,31 +29,32 @@ class Server:
         command = parsed_data[0]
         # check if register command
         if command == "REGISTER":
-            # check for device already existing
-            for client in self.clients:
-                # check if device id exists
-                if client.device_id == parsed_data[1]:
-                    # check if it belongs to the device calling it
-                    if client.mac_address == parsed_data[2]:
-                        # Send a success
-                        return self.ack_w_msg_count(conn, client.device_id, len(client.messages), client.get_time_in_str())
-                    # device id already registered to another mac address
-                    else:
-                        # Send a failure
-                        return self.dup_nack(conn, client.device_id, client.mac_address)
-                # check if mac address already exists
-                elif client.mac_address == parsed_data[2]:
+            # Run register message handling
+            return self.register_device(conn, parsed_data[1], parsed_data[2], parsed_data[3], parsed_data[4])
+
+    def register_device(self, conn, device_id, mac_address, client_ip, client_port):
+        # check for device already existing
+        for client in self.clients:
+            # check if device id exists
+            if client.device_id == device_id:
+                # check if it belongs to the device calling it
+                if client.mac_address == mac_address:
+                    # Send a success
+                    return self.ack_w_msg_count(conn, client.device_id, len(client.messages), client.get_time_in_str())
+                # device id already registered to another mac address
+                else:
                     # Send a failure
                     return self.dup_nack(conn, client.device_id, client.mac_address)
-            # Device not found
-            #
-            # Append new client to clients list with their:
-            #
-            #                                       device id,    mac address,     ip address,    port number
-            self.clients.append(TrackedClients(parsed_data[1], parsed_data[2], parsed_data[3], parsed_data[4]))
-            # send ack for register
-            print parsed_data[2]
-            return self.new_device_ack(conn, parsed_data[1])
+            # check if mac address already exists
+            elif client.mac_address == mac_address:
+                    # Send a failure
+                    return self.dup_nack(conn, client.device_id, client.mac_address)
+        # Device not found
+
+        # Append new client to clients list
+        self.clients.append(TrackedClients(device_id, mac_address, client_ip, client_port))
+        # send ack for register
+        return self.new_device_ack(conn, device_id)
 
     def send(self, conn, msg):
         print "Sent: ", msg
