@@ -65,6 +65,12 @@ class Client:
         # check if ack was recieved
         if parsed_msg[0] == "ACK":
             return self.receive_ack(parsed_msg)
+        elif parsed_msg[0] == "NACK":
+            if parsed_msg[2] == self.userID:
+                print "\nID registered to different mac: ", parsed_msg[3]
+            else:
+                print "\nDuplicate registration, can only have one id for device: "
+                print "Device registered under: ", parsed_msg[2]
 
     def receive_ack(self, msg):
         # Check status code

@@ -29,7 +29,6 @@ class Server:
         command = parsed_data[0]
         # check if register command
         if command == "REGISTER":
-            print "Looping through"
             # check for device already existing
             for client in self.clients:
                 # check if device id exists
@@ -42,11 +41,15 @@ class Server:
                     else:
                         # Send a failure
                         return self.dup_nack(conn, client.device_id, client.mac_address)
-            # Device id not found:
+                # check if mac address already exists
+                elif client.mac_address == parsed_data[2]:
+                    # Send a failure
+                    return self.dup_nack(conn, client.device_id, client.mac_address)
+            # Device not found
             #
             # Append new client to clients list with their:
             #
-            #                                  device id,    mac address,     ip address,    port number
+            #                                       device id,    mac address,     ip address,    port number
             self.clients.append(TrackedClients(parsed_data[1], parsed_data[2], parsed_data[3], parsed_data[4]))
             # send ack for register
             print parsed_data[2]
