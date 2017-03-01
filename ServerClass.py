@@ -48,7 +48,7 @@ class Server:
                 # check if it belongs to the device calling it
                 if client.mac_address == mac_address:
                     # Send a success
-                    return self.ack_w_msg_count(conn, client.device_id, 'a', client.get_time_in_str())
+                    return self.ack_w_msg_count(conn, client.device_id, len(client.messages), client.get_time_in_str())
                 # device id already registered to another mac address
                 else:
                     # Send a failure

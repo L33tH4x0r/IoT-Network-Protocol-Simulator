@@ -1,7 +1,7 @@
 import socket
 import sys
 import os
-
+import time
 execfile( os.getcwd() + "/StreamSocket.py" )
 execfile( os.getcwd() + "/ClientClass.py" )
 # Get user parameters
@@ -16,9 +16,9 @@ sent = client.register()
 if sent == 0:
     raise RunTimeError("Socket Connection Broken")
 # recieve ACK from server
-recieved = client.recieve_msg(client.client_socket.ssock.recv(1024))
-if not recieved:
-    sys.exit(0)
+reply = client.recieve_msg(client.client_socket.ssock.recv(1024))
+# Tell server that you are getting off for now
+client.quit()
 # close socket
 client.client_socket.close()
 # exit program

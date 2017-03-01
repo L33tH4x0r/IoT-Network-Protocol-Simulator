@@ -49,6 +49,14 @@ class Client:
         elif code == 2:
             return self.send("QUERY " + code + " " + self.userID)
 
+    def quit(self):
+        # Send Mesage
+        return self.send("QUIT " + self.userID)
+
+    def deregister(self):
+        # Send message
+        return self.send("DEREGISTER " + self.userID + " " + self.mac)
+
     # COMMUNICATION ############################################################
     ############################################################################
     def send(self, msg):
@@ -108,6 +116,9 @@ class Client:
         else:
             print "\nSuccessfully registered with server"
             return None
+
+
+
     # ERROR HANDLING ###########################################################
     ############################################################################
     def write_to_log(self, msg):
