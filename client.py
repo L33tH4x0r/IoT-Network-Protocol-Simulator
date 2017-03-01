@@ -16,6 +16,10 @@ sent = client.register()
 if sent == 0:
     raise RunTimeError("Socket Connection Broken")
 # recieve ACK from server
-client.recieve_ack(client.client_socket.ssock.recv(1024))
+recieved = client.recieve_msg(client.client_socket.ssock.recv(1024))
+if not recieved:
+    sys.exit(0)
 # close socket
 client.client_socket.close()
+# exit program
+sys.exit(0)
