@@ -80,8 +80,6 @@ while True:
         print "Exiting connection:"
         # Tell server that you are getting off for now
         client.quit()
-        # recieve ACK from server
-        reply = client.recieve_msg(client.client_socket.rec(client.client_socket))
         # close socket
         client.client_socket.close()
         # exit program
