@@ -57,11 +57,15 @@ class Client:
         # Send message
         return self.send("DEREGISTER " + self.userID + " " + self.mac)
 
+    def message(self, to_id, send_message):
+        return self.send("MSG " + self.userID + " " + to_id + " " + send_message)
+
+
     # COMMUNICATION ############################################################
     ############################################################################
     def send(self, msg):
         print "Sending: ", msg
-        return self.client_socket.ssock.send(msg)
+        return self.client_socket.send(self.client_socket.ssock, msg)
 
     def recieve_msg(self, msg):
         # Check if conneciton broken

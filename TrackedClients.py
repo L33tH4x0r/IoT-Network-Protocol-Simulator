@@ -6,7 +6,12 @@ class TrackedClients:
         self.client_ip = client_ip
         self.client_port = client_port
         self.register_time = datetime.now()
+        self.last_active = datetime.now()
         self.messages = []
+        self.active = True
 
     def get_time_in_str(self):
         return self.register_time.strftime('%Y-%m-%d %H:%M:%S')
+
+    def get_last_active(self):
+        return self.last_active.strftime('%Y-%m-%d %H:%M:%S')

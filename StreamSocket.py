@@ -27,35 +27,43 @@ class StreamSocket:
     def close(self):
         self.ssock.close()
 
-    def send(self, msg):
+    def recv(self, buffer_size):
+        return self.ssock.recv(buffer_size)
+
+    def send(self, conn, msg):
         # Initialize sent counter
         totalsent = 0
+        msg = msg + "@"
         # Loop through message
         while totalsent < len(msg):
-            # Send max stream size amount of bytes starting from the most recent byte sent
-            sent = self.ssock.send(msg[totalsent:totalsent+self.MAX_BUFFER_LEN])
-            # check if socket connection loss
-            if sent == 0:
-                print "Connection lost"
-                break
-            # update the total sent
-            totalsent = totalsent + sent
-        # let other side know you are done
-        self.ssock.send("\0")
+            try:
+                # Send max stream size amount of bytes starting from the most recent byte sent
+                sent = conn.send(msg[totalsent:totalsent+self.MAX_BUFFER_LEN])
+
+                # check if socket connection loss
+                if sent == 0:
+                    print "Connection lost"
+
+                # update the total sent
+                totalsent = totalsent + sent
+            except Exception, e:
+                print "Waiting for client: "
 
     def rec(self, conn):
         # initialize msg buffer
         msg = []
         data = ""
         # Cycle through recieving stream
-        while data != "\0":
+        while True:
             # Recieve data from socket
-            data = conn.recv(1024)
-            # check for socket connection loss
-            if data == "":
-                print "Connection lost"
-                break
-            # add recieved data from socket
-            msg.append(data)
-        #return data received in one string
-        return ''.join(msg)
+            data = conn.recv(self.MAX_BUFFER_LEN)
+
+            if data != "":
+                # add recieved data from socket
+                if data[-1] == "@":
+                    # Add data minus terminating character
+                    msg.append(data[0:-1])
+                    #return data received in one string
+                    return ''.join(msg)
+                else:
+                    msg.append(data)

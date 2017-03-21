@@ -14,11 +14,13 @@ while True:
     # Accept a connection
     conn, addr = server.server_socket.accept()
     print "Reciving connection from ", addr
-    # Recieve data from connection
-    data = conn.recv(server.server_socket.MAX_BUFFER_LEN)
-    print "Recieved: ", data
-    # Input data into server
-    sent = server.input_data(data, conn)
-    # check if send was successful
-    if sent == 0:
-        raise RuntimeError("ERROR: Message not sent")
+
+    while True:
+        # Recieve data from connection
+        data = server.server_socket.rec(conn)
+        print "Recieved: ", data
+        # Input data into server
+        sent = server.input_data(data, conn)
+        # check if send was successful
+        if sent == 0:
+            raise RuntimeError("ERROR: Message not sent")

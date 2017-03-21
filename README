@@ -11,7 +11,7 @@ $ client.py [user_id] [server_IP] [server_port]
 
 For this submission, I have been able to register my device and get a response
 from the server. I wasn't able, however, to receive more than one message from
-a connection on the server side. I hope I have everything that you are looking
-for then it relates to the protocol. Because I don't know what we are going
-to use the protocol for, I don't know how you want my main file to be
-structured.
+a connection on the server side. Also, I had trouble outputting to the error log
+I hope I have everything that you are looking for then it relates to the
+protocol. Because I don't know what we are going to use the protocol for, I
+don't know how you want my main file to be structured.

@@ -31,12 +31,15 @@ class Server:
         if command == "REGISTER":
             # Run register message handling
             return self.register_device(conn, parsed_data[1], parsed_data[2], parsed_data[3], parsed_data[4])
+        # elif command == "QUIT":
+        #     # Run Quit handler
+        #     return self.quit(parsed_data[1])
 
     def send(self, conn, msg):
         # Print the message thats being sent
         print "Sent: ", msg
         # send message
-        return conn.send(msg)
+        return self.server_socket.send(conn, msg)
 
     # DATA MANAGEMENT ##########################################################
     ############################################################################
@@ -63,6 +66,12 @@ class Server:
         self.clients.append(TrackedClients(device_id, mac_address, client_ip, client_port))
         # send ack for register
         return self.new_device_ack(conn, device_id)
+    #
+    # def quit(self, device_id):
+    #     # Search through clients for the device id
+    #     for client in self.clients:
+    #         if client.device_id == device_id:
+
 
     # MESSAGES #################################################################
     ############################################################################
