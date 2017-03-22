@@ -38,10 +38,11 @@ while True:
     print "<R>egister with server"
     print "<D>eregister with device"
     print "<S>end Query to Device"
-    print "Send <M>essage to Devive"
+    print "Send <M>essage to Device"
     print "<Q>uit"
     # Get Input from user
     command = raw_input("-> ").upper()
+    print "\nProcessing Command: "
     # Process Command
     if command == 'R':
         # Register device with server
@@ -62,8 +63,9 @@ while True:
             # Query user for device id
             print "Enter the device id you want to connect to"
             to_id = raw_input("-> ")
+            print ""
         # send query to server
-        check_sent(client.query(command, to_id), client.client_socket)
+        check_sent(client.query(str(command), to_id), client.client_socket)
 
     elif command == 'M':
         # Prompt user for device id to message

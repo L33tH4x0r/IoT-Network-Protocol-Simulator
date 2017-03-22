@@ -22,7 +22,7 @@ class Server:
 
     # COMMUNICATION ############################################################
     ############################################################################
-    def input_data(self, data, conn):
+    def input_data(self, data, conn, addr):
         # parse data
         parsed_data = data.split()
         # Get command
@@ -34,6 +34,12 @@ class Server:
         elif command == "QUIT":
             # Run Quit handler
             return self.quit(parsed_data[1])
+        elif command == "DEREGISTER":
+            # Run Deregister handler
+            return self.deregister(conn, parsed_data[1], parsed_data[2])
+        elif command == "QUERY":
+            # Run Query Handler
+            return self.query(conn, parsed_data[1], parsed_data[2])
 
     def send(self, conn, msg):
         # Print the message thats being sent
@@ -75,6 +81,41 @@ class Server:
                 print "Ended connection with device id: " + device_id
                 return "Ended Connection"
 
+        print "Device ID not found"
+        return "Ended Connection"
+
+    def deregister(self, conn, device_id, mac_address):
+        # find device id
+        for client in self.clients:
+            if client.device_id == device_id:
+                if client.mac_address == mac_address:
+                    self.clients.remove(client)
+                    print "Device ID " + device_id + " Successfully Removed"
+                    return self.deregister_ack(conn, device_id)
+                else:
+                    print "ERROR: MAC Address Not registered to device id: " + device_id
+                    return self.deregister_nack(conn, client.device_id, client.mac_address)
+        else:
+            print "Device Id " + device_id + " not found, returning ack"
+            return self.deregister_ack(conn, device_id)
+
+    def query(self, conn, code, device_id):
+        if code == "1":
+            for client in self.clients:
+                if client.device_id == device_id:
+                    print "Device ID " + device_id + " found, returning ip address and port number of client"
+                    return self.query_client_ack(conn, client.client_ip, client.client_port)
+
+            print "Device ID " + device_id + " not found, returning nack to client"
+            return self.query_client_nack(conn)
+        else:
+            for client in self.clients:
+                if client.device_id == device_id:
+                    print "Device ID " + device_id + " found, returning count of messages back"
+                    return self.ack_w_msg_count(conn, client.device_id, len(client.messages))
+            print "Device ID " + device_id + " not found, returning nack"
+            return self.query_client_nack(conn)
+
 
     # MESSAGES #################################################################
     ############################################################################
@@ -88,4 +129,20 @@ class Server:
 
     def dup_nack(self, conn, device_id, mac_address):
         msg = "NACK 1 " + device_id + " " + mac_address
+        return self.send(conn, msg)
+
+    def query_client_nack(self, conn):
+        msg = "NACK 2"
+        return self.send(conn, msg)
+
+    def deregister_nack(self, conn, device_id, mac):
+        msg = "NACK 3 " + mac + " " + device_id
+        return self.send(conn, msg)
+
+    def deregister_ack(self, conn, device_id):
+        msg = "ACK 3 " + device_id
+        return self.send(conn, msg)
+
+    def query_client_ack(self, conn, client_ip, client_port):
+        msg = "ACK 2 " + client_ip + " " + client_port
         return self.send(conn, msg)

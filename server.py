@@ -19,7 +19,7 @@ while True:
     data = server.server_socket.rec(conn)
     print "Recieved: ", data
     # Input data into server
-    sent = server.input_data(data, conn)
+    sent = server.input_data(data, conn, addr)
     # check if send was successful
     if sent == 0:
         raise RuntimeError("ERROR: Message not sent")
@@ -29,7 +29,7 @@ while True:
         data = server.server_socket.rec(conn)
         print "Recieved: ", data
         # Input data into server
-        sent = server.input_data(data, conn)
+        sent = server.input_data(data, conn, addr)
         # check if send was successful
         if sent == 0:
             raise RuntimeError("ERROR: Message not sent")

@@ -44,9 +44,9 @@ class Client:
 
     def query(self, code, to_id):
         # Check code
-        if code == 1:
+        if code == "1":
             return self.send("QUERY " + code + " " + self.userID + " " + to_id)
-        elif code == 2:
+        elif code == "2":
             return self.send("QUERY " + code + " " + self.userID)
 
     def quit(self):
@@ -55,7 +55,7 @@ class Client:
 
     def deregister(self):
         # Send message
-        return self.send("DEREGISTER " + self.userID + " " + self.mac)
+        return self.send("DEREGISTER " + self.userID + " " + str(self.mac))
 
     def message(self, to_id, send_message):
         return self.send("MSG " + self.userID + " " + to_id + " " + send_message)
@@ -73,7 +73,7 @@ class Client:
             print "Connection lost"
             return None
         # print message recieved
-        print "Recieved: ", msg
+        print "Recieved: ", msg, "\n"
         # parse msg
         parsed_msg = msg.split()
         # check if ACK
@@ -107,10 +107,10 @@ class Client:
             # check if new messages
             try:
                 if int(msg[3]) > 0:
-                    print "\nAlready registered, server has ", int(msg[3]), " new messages"
+                    print "\nAlready registered, server has ", int(msg[3]), " new messages\n"
                     return self.getNewMessages()
                 else:
-                    print "\nAlready registered, no new messages"
+                    print "\nAlready registered, no new messages\n"
                     return None
             except:
                 raise RuntimeError(self.NO_MSG_CNT_ERROR)
@@ -118,7 +118,7 @@ class Client:
                 return None
         # Device was newly registered
         else:
-            print "\nSuccessfully registered with server"
+            print "\nSuccessfully registered with server\n"
             return None
 
 
