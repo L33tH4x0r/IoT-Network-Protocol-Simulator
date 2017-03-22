@@ -1,4 +1,5 @@
 from uuid import getnode as get_mac
+from datetime import datetime
 import socket
 execfile( os.getcwd() + "/StreamSocket.py" )
 execfile(os.getcwd() + "/TrackedClients.py")
@@ -40,6 +41,9 @@ class Server:
         elif command == "QUERY":
             # Run Query Handler
             return self.query(conn, parsed_data[1], parsed_data[2])
+        elif command == "MSG":
+            # Run the message handler
+            return self.message(conn, parsed_data[1], parsed_data[2], parsed_data[3])
 
     def send(self, conn, msg):
         # Print the message thats being sent
@@ -56,6 +60,8 @@ class Server:
             if client.device_id == device_id:
                 # check if it belongs to the device calling it
                 if client.mac_address == mac_address:
+                    # Add connection to client
+                    client.connection = conn
                     # Send a success
                     return self.ack_w_msg_count(conn, client.device_id, len(client.messages), client.get_time_in_str())
                 # device id already registered to another mac address
@@ -69,7 +75,7 @@ class Server:
         # Device not found
 
         # Append new client to clients list
-        self.clients.append(TrackedClients(device_id, mac_address, client_ip, client_port))
+        self.clients.append(TrackedClients(device_id, mac_address, client_ip, client_port, conn))
         # send ack for register
         return self.new_device_ack(conn, device_id)
 
@@ -78,6 +84,7 @@ class Server:
         for client in self.clients:
             if client.device_id == device_id:
                 client.active = False
+                client.connection = None
                 print "Ended connection with device id: " + device_id
                 return "Ended Connection"
 
@@ -108,13 +115,26 @@ class Server:
 
             print "Device ID " + device_id + " not found, returning nack to client"
             return self.query_client_nack(conn)
-        else:
+        elif code == "2":
             for client in self.clients:
                 if client.device_id == device_id:
                     print "Device ID " + device_id + " found, returning count of messages back"
-                    return self.ack_w_msg_count(conn, client.device_id, len(client.messages))
+                    return self.ack_w_msg_count(conn, client.device_id, len(client.messages), datetime.now().strftime('%Y-%m-%d %H:%M:%S') )
             print "Device ID " + device_id + " not found, returning nack"
             return self.query_client_nack(conn)
+
+    def message(self, conn, from_id, to_id, message):
+        # Search for device
+        for client in self.clients:
+            if client.device_id == to_id:
+                # hold message for when they login again
+                client.messages.append([from_id, message, datetime.now().strftime('%Y-%m-%d %H:%M:%S')])
+                print "Device ID " + to_id  + " found. Saved message to be sent"
+                # Send client an ack to mention we got it
+                return self.message_recieved_ack(conn, to_id)
+        # Client not found
+        print "Device ID " + to_id + " not found, sending error to client"
+        return self.message_nack(conn, to_id)
 
 
     # MESSAGES #################################################################
@@ -145,4 +165,15 @@ class Server:
 
     def query_client_ack(self, conn, client_ip, client_port):
         msg = "ACK 2 " + client_ip + " " + client_port
+        return self.send(conn, msg)
+
+    def send_message(self, conn, from_id, to_id, message, time):
+        msg = "MSG " + from_id + " " + to_id + " " + message + " " + time
+        return self.send(conn, msg)
+    def message_recieved_ack(self, conn, to_id):
+        msg = "ACK 5 " + to_id + " " + datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        return self.send(conn, msg)
+
+    def message_nack(self, conn, to_id):
+        msg = "NACK 5 " + to_id
         return self.send(conn, msg)

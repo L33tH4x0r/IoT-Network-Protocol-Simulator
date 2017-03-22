@@ -101,6 +101,7 @@ class Client:
                 self.write_to_log(self.SERVER_ID_ERROR)
                 return None
 
+
     def check_messages(self, msg):
         # Check if already registered
         if len(msg) > 3:
@@ -112,8 +113,8 @@ class Client:
                 else:
                     print "\nAlready registered, no new messages\n"
                     return None
-            except:
-                raise RuntimeError(self.NO_MSG_CNT_ERROR)
+            except Exception, e:
+                print e
                 self.write_to_log(self.NO_MSG_CNT_ERROR)
                 return None
         # Device was newly registered
