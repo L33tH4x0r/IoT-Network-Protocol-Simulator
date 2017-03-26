@@ -16,11 +16,11 @@ class ThreadManager(threading.Thread):
             # Loop through all tracked threads in system
             for thread in self.client_threads:
                 # Check if the thread is inactive
-                if int(current_time - thread.last_activity) > 1:
+                if int(current_time - thread.last_activity) > 60:
                     # Signal thread to stop
                     print thread.addr, " is being stopped"
                     thread.stop()
-                    
+                    self.client_threads.remove(thread)
             # Sleep to give priority to system over management
             print "Thread Manager Sleeping"
             time.sleep(5)

@@ -27,6 +27,9 @@ class StreamSocket:
     def close(self):
         self.ssock.close()
 
+    def settimeout(self, duration):
+        self.ssock.settimeout(duration)
+
     def recv(self, buffer_size):
         return self.ssock.recv(buffer_size)
 

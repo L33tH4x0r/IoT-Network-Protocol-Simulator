@@ -19,13 +19,18 @@ thread_manager.start()
 while True:
     # Accept a connection
     print "Waiting to recieve connection\n"
-    conn, addr = server.server_socket.accept()
-    print "Reciving connection from ", addr
-    # Create thread
-    print "Creating Thread:"
-    new_thread = ClientThread(server, conn, addr)
-    # Start Thread
-    print "Starting Thread"
-    new_thread.start()
-    # Track new thread
-    thread_manager.add_thread(new_thread)
+    try:
+        conn, addr = server.server_socket.accept()
+        conn.settimeout(5)
+        print "Reciving connection from ", addr
+        # Create thread
+        print "Creating Thread:"
+        new_thread = ClientThread(server, conn, addr)
+        # Start Thread
+        print "Starting Thread"
+        new_thread.start()
+        # Track new thread
+        thread_manager.add_thread(new_thread)
+    except Exception,e:
+        print e
+        print "Socket timeout on new connection"
