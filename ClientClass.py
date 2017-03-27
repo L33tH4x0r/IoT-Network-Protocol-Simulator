@@ -31,6 +31,7 @@ class Client:
         # create error log
         self.error_log = open('error.log', 'a')
         self.error_log.close()
+        self.queried_devices = []
 
     # PROTOCOL MESSAGES ########################################################
     ############################################################################
@@ -101,6 +102,20 @@ class Client:
                 raise RuntimeError(self.SERVER_ID_ERROR)
                 self.write_to_log(self.SERVER_ID_ERROR)
                 return None
+        if msg[1] == '2':
+            # parse message
+            device_id       = msg[4]
+            device_ip       = msg[2]
+            device_port     = int(msg[3])
+            # Check if device already exists
+            for device in self.queried_devices:
+                if device[0] == device_id:
+                    device[1] = device_ip
+                    device[2] = device_port
+                    return None
+            # Add device to tracked queries
+            self.queried_devices.append([device_id, device_ip, device_port])
+            return None
 
 
     def check_messages(self, msg):

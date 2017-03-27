@@ -24,9 +24,11 @@ def check_sent(sent, server_conn):
         ready = select.select([server_conn.ssock], [], [], 2)
         if ready[0] :
             client.recieve_msg(server_conn.rec(server_conn))
+            return True
         else:
             fail_count += 1
     print "Packet dropped, message not recieved"
+    return False
 
 ################################################################################
 # MAIN PROGRAM                      ############################################
@@ -47,6 +49,9 @@ while True:
     print "<D>eregister with device"
     print "<S>end Query to Device"
     print "Send <M>essage to Device"
+    print "<V>iew All Saved Queries"
+    print "<T>raceroute to Device"
+    print "<P>ing to Device"
     print "<Q>uit"
     # Get Input from user
     command = raw_input("-> ").upper()
@@ -88,6 +93,9 @@ while True:
         # Send message to server
         print "Sending Message Command"
         check_sent(client.message(to_id, message), client.client_socket)
+
+    # elif command == 'V':
+    #     if client.
 
     elif command == 'Q':
         # Prompt user

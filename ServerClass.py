@@ -118,7 +118,7 @@ class Server:
             for client in self.clients:
                 if client.device_id == device_id:
                     print "Device ID " + device_id + " found, returning ip address and port number of client"
-                    return self.query_client_ack(conn, client.client_ip, client.client_port)
+                    return self.query_client_ack(conn, client.client_ip, client.client_port, device_id)
 
             print "Device ID " + device_id + " not found, returning nack to client"
             return self.query_client_nack(conn)
@@ -170,8 +170,8 @@ class Server:
         msg = "ACK 3 " + device_id
         return self.send(conn, msg)
 
-    def query_client_ack(self, conn, client_ip, client_port):
-        msg = "ACK 2 " + client_ip + " " + client_port
+    def query_client_ack(self, conn, client_ip, client_port, device_id):
+        msg = "ACK 2 " + client_ip + " " + client_port + " " + device_id
         return self.send(conn, msg)
 
     def send_message(self, conn, from_id, to_id, message, time):
