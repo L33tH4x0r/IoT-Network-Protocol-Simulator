@@ -5,7 +5,7 @@ import os
 # Get custom classes
 execfile( os.getcwd() + "/StreamSocket.py"  )
 execfile( os.getcwd() + "/ServerClass.py"   )
-execfile( os.getcwd() + "/ClientThread.py"  )
+execfile( os.getcwd() + "/ServerThread.py"  )
 execfile( os.getcwd() + "/ThreadManager.py" )
 # Get input from user
 server_ip_address = sys.argv[1]
@@ -26,7 +26,7 @@ while True:
         print "Reciving connection from ", addr
         # Create thread
         print "Creating Thread:"
-        new_thread = ClientThread(server, conn, addr)
+        new_thread = ServerThread(server, conn, addr)
         # Start Thread
         print "Starting Thread"
         new_thread.start()

@@ -1,5 +1,6 @@
 from uuid import getnode as get_mac
 import socket
+import os
 execfile( os.getcwd() + "/StreamSocket.py" )
 class Client:
     # CLASS CONSTANTS ##########################################################
@@ -32,6 +33,7 @@ class Client:
         self.error_log = open('error.log', 'a')
         self.error_log.close()
         self.queried_devices = []
+        # Open UDP socket
 
     # PROTOCOL MESSAGES ########################################################
     ############################################################################
@@ -138,6 +140,38 @@ class Client:
             print "\nSuccessfully registered with server\n"
             return None
 
+    # UDP Messages #############################################################
+    ############################################################################
+    def traceroute(self, device_name):
+        for device in self.queried_devices:
+            if device[0] == device_name:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                trace_message = "traceroute " + device[1]
+                trace = os.system(trace_message)
+                msg = "DATA " + self.device_id + " trace " + " " + trace
+                count = 0
+                while count < 3:
+                    sock.sendto(msg, (device[1], device[2]))
+
+                return True
+
+        print "Device not found, please query to maske sure alive"
+        return False
+
+    def ping(self, device_name):
+        for device in self.queried_devices:
+            if device[0] == device_name:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                ping_message = "ping " + device[1]
+                ping = os.system(trace_message)
+                msg = "DATA " + self.device_id + " ping " + " " + ping
+                count = 0
+                while count < 3:
+                    sock.sendto(msg, (device[1], device[2]))
+                return True
+
+        print "Device not found, please query to maske sure alive"
+        return False
 
 
     # ERROR HANDLING ###########################################################
