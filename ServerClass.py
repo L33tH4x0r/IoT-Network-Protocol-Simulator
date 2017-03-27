@@ -69,6 +69,9 @@ class Server:
                 if client.mac_address == mac_address:
                     # Add connection to client
                     client.connection = conn
+                    # Update information from client
+                    client.client_ip = client_ip
+                    client.client_port = client_port
                     # Send a success
                     return self.ack_w_msg_count(conn, client.device_id, len(client.messages), client.get_time_in_str())
                 # device id already registered to another mac address

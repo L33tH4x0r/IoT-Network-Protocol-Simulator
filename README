@@ -4,14 +4,9 @@ CLASS: CPE.401
 FOR THIS SUBMISSION, THE FILE INCLUDES:  server.py, and client.py.
 
 To run the server.py file, type:
-$ server.py [server_port_number]
+$ server.py [server_ip] [server_port_number]
 
 To run client.py, type:
-$ client.py [user_id] [server_IP] [server_port]
+$ client.py [user_id] [cleint_ip] [server_IP] [server_port]
 
-For this submission, I have been able to register my device and get a response
-from the server. I wasn't able, however, to receive more than one message from
-a connection on the server side. Also, I had trouble outputting to the error log
-I hope I have everything that you are looking for then it relates to the
-protocol. Because I don't know what we are going to use the protocol for, I
-don't know how you want my main file to be structured.
+For this submission, I have cleaned up the code from last submission to include all of the requirements for the protocol. Additionally, I've implemented an asynchronous thread system for the server to handle clients. Also, I've implemented an asynchronous thread for clients to accept udp connections on. Lastly, I've setup the ability for clients to send pings to each other. I hwasn't able to implement sending system messages to each other however and the ACK isn't working quite right for UDP client to UDP Client
