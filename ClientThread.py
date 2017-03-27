@@ -21,7 +21,7 @@ class ClientThread(threading.Thread):
                 data = self.server.server_socket.rec(conn)
                 print "Recieved: ", data
                 self.last_activity = time.time()
-                self.conn.settimeout(5)
+                self.conn.settimeout(120)
                 # Input data into server
                 sent = self.server.input_data(data, conn, addr)
                 # check if send was successful
@@ -30,9 +30,9 @@ class ClientThread(threading.Thread):
                 elif sent == "Ended Connection":
                     self.stop()
             except Exception,e:
-                if e == 'timed out'
-                print self.addr, " Socket Timeout"
-                self.stop()
+                if e == 'timed out':
+                    print self.addr, " Socket Timeout"
+                    self.stop()
 
         print addr, " is exiting"
 

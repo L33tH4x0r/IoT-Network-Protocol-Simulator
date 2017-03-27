@@ -8,12 +8,13 @@ execfile( os.getcwd() + "/ServerClass.py"   )
 execfile( os.getcwd() + "/ClientThread.py"  )
 execfile( os.getcwd() + "/ThreadManager.py" )
 # Get input from user
-server_port_number = sys.argv[1]
+server_ip_address = sys.argv[1]
+server_port_number = sys.argv[2]
 # Create server socket.gethostname() with raspberry pi
-server = Server(server_port_number, "127.0.0.1")
+server = Server(server_port_number, server_ip_address )
 # Start thread manager
-thread_manager = ThreadManager(server)
-thread_manager.start()
+# thread_manager = ThreadManager(server)
+# thread_manager.start()
 
 # Run server
 while True:
@@ -30,7 +31,7 @@ while True:
         print "Starting Thread"
         new_thread.start()
         # Track new thread
-        thread_manager.add_thread(new_thread)
+        # thread_manager.add_thread(new_thread)
     except Exception,e:
         print e
         print "Socket timeout on new connection"

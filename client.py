@@ -24,13 +24,13 @@ def check_sent(sent, server_conn):
 # MAIN PROGRAM                      ############################################
 ################################################################################
 
-
 # Get user parameters
 user_ID = sys.argv[1]
-server_IP = sys.argv[2]
-server_port = sys.argv[3]
+current_ip = sys.argv[2]
+server_IP = sys.argv[3]
+server_port = sys.argv[4]
 # Create client
-client = Client(user_ID, server_IP, server_port)
+client = Client(user_ID, server_IP, server_port, current_ip )
 
 while True:
     # Output Menu

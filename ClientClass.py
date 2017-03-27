@@ -14,11 +14,12 @@ class Client:
                     userID,
                     serverIP,
                     serverPort,
+                    currentIP
                 ):
         # Add socket to client
         self.client_socket = StreamSocket()
         # Bind socket to current hostname
-        self.client_socket.bind((socket.gethostname(),0))
+        self.client_socket.bind((currentIP,0))
         # Give client identity
         self.userID = userID
         self.clientIP = self.client_socket.ssock.getsockname()[0]
