@@ -24,10 +24,9 @@ def check_sent(sent, server_conn):
         ready = select.select([server_conn.ssock], [], [], 2)
         if ready[0] :
             client.recieve_msg(server_conn.rec(server_conn))
-            return True
         else:
             fail_count += 1
-    return False
+    print "Packet dropped, message not recieved"
 
 ################################################################################
 # MAIN PROGRAM                      ############################################
@@ -56,14 +55,13 @@ while True:
     if command == 'R':
         # Register device with server
         print "Sending Register Command:\n"
-        while not check_sent(client.register(), client.client_socket):
-            print "Sending Register Command:\n"
+        check_sent(client.register(), client.client_socket)
 
     elif command == 'D':
         # Deregister with server
         print "Sending Deregister command:\n"
-        while not check_sent(client.deregister(), client.client_socket):
-            print "Sending Deregister command:\n"
+        check_sent(client.deregister(), client.client_socket)
+
     elif command == 'S':
         # Prompt user for query command
         print "Enter:"
@@ -78,8 +76,7 @@ while True:
             print ""
         # send query to server
         print "Sending Query Command\n"
-        while not check_sent(client.query(str(command), to_id), client.client_socket):
-            print "Sending Query Command\n"
+        check_sent(client.query(str(command), to_id), client.client_socket)
 
     elif command == 'M':
         # Prompt user for device id to message
@@ -90,8 +87,7 @@ while True:
         message = raw_input("-> ")
         # Send message to server
         print "Sending Message Command"
-        while not check_sent(client.message(to_id, message), client.client_socket):
-            print "Sending Message Command"
+        check_sent(client.message(to_id, message), client.client_socket)
 
     elif command == 'Q':
         # Prompt user

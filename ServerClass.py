@@ -44,7 +44,10 @@ class Server:
             return self.deregister(conn, parsed_data[1], parsed_data[2])
         elif command == "QUERY":
             # Run Query Handler
-            return self.query(conn, parsed_data[1], parsed_data[2])
+            if parsed_data[1] == "1":
+                return self.query(conn, parsed_data[1], parsed_data[3] )
+            else:
+                return self.query(conn, parsed_data[1], parsed_data[2] )
         elif command == "MSG":
             # Run the message handler
             return self.message(conn, parsed_data[1], parsed_data[2], parsed_data[3])
