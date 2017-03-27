@@ -5,6 +5,7 @@ import socket
 import sys
 import os
 import time
+import select
 ################################################################################
 # IMPORT CUSTOM CODE                ############################################
 ################################################################################
@@ -17,8 +18,16 @@ def check_sent(sent, server_conn):
     if sent == 0:
         raise RunTimeError("Socket Connection Broken")
     # Get reply from client
-    print "Waiting for server reply:"
-    client.recieve_msg(client.client_socket.rec(server_conn))
+    fail_count = 0
+    while fail_count < 3:
+        print "Waiting for server reply:"
+        ready = select.select([server_conn.ssock], [], [], 2)
+        if ready[0] :
+            client.recieve_msg(server_conn.rec(server_conn))
+            return True
+        else:
+            fail_count += 1
+    return False
 
 ################################################################################
 # MAIN PROGRAM                      ############################################
@@ -46,12 +55,15 @@ while True:
     # Process Command
     if command == 'R':
         # Register device with server
-        check_sent(client.register(), client.client_socket)
+        print "Sending Register Command:\n"
+        while not check_sent(client.register(), client.client_socket):
+            print "Sending Register Command:\n"
 
     elif command == 'D':
         # Deregister with server
-        check_sent(client.deregister(), client.client_socket)
-
+        print "Sending Deregister command:\n"
+        while not check_sent(client.deregister(), client.client_socket):
+            print "Sending Deregister command:\n"
     elif command == 'S':
         # Prompt user for query command
         print "Enter:"
@@ -65,7 +77,9 @@ while True:
             to_id = raw_input("-> ")
             print ""
         # send query to server
-        check_sent(client.query(str(command), to_id), client.client_socket)
+        print "Sending Query Command\n"
+        while not check_sent(client.query(str(command), to_id), client.client_socket):
+            print "Sending Query Command\n"
 
     elif command == 'M':
         # Prompt user for device id to message
@@ -75,7 +89,9 @@ while True:
         print "Enter in the message you want to send"
         message = raw_input("-> ")
         # Send message to server
-        check_sent(client.message(to_id, message), client.client_socket)
+        print "Sending Message Command"
+        while not check_sent(client.message(to_id, message), client.client_socket):
+            print "Sending Message Command"
 
     elif command == 'Q':
         # Prompt user

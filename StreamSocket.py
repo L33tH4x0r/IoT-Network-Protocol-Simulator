@@ -11,6 +11,8 @@ class StreamSocket:
             self.ssock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         else:
             self.ssock = NewSocket
+        # self.ssock.setblocking(0)
+
     def bind(self, address):
         self.ssock.bind(address)
 

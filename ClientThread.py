@@ -1,5 +1,6 @@
 import threading
 import time
+import select
 
 class ClientThread(threading.Thread):
     def __init__(self, server, conn, addr):
@@ -17,7 +18,7 @@ class ClientThread(threading.Thread):
         print "Recieving Data from ", self.addr
         while not self.stopped():
             try:
-                self.last_activity = time.time()
+
                 data = self.server.server_socket.rec(conn)
                 print "Recieved: ", data
                 self.last_activity = time.time()
