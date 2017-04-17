@@ -15,7 +15,7 @@ class ClientThread(threading.Thread):
         self.client_socket.bind((client_ip, client_port))
 
     def run(self):
-        # Start thread to handle recieving data
+        # Start thread to handle recieving data        
         print "Client Thread Created\n"
         while not self.stopped():
             ready = select.select([self.client_socket], [], [], 2)
