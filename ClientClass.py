@@ -2,6 +2,8 @@ from uuid import getnode as get_mac
 import socket
 import os
 import subprocess
+import dropbox
+import datetime
 execfile( os.getcwd() + "/StreamSocket.py" )
 execfile( os.getcwd() + "/ClientThread.py" )
 class Client:
@@ -38,6 +40,8 @@ class Client:
         # Open UDP socket
         self.client_thread = ClientThread(self.clientIP, self.clientPort, self)
         self.client_thread.start()
+        self.dbx = dropbox.Dropbox('AaOxbynKDoAAAAAAAAAAfWGBFWKm5iRoD6nNXqnuKs_sfKxBPTLe3hTX_G_GVCE0')
+
     # PROTOCOL MESSAGES ########################################################
     ############################################################################
     def register(self):
@@ -168,13 +172,36 @@ class Client:
             if device[0] == device_name:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                 msg = "DATA " + str(self.userID) + " ping"
+                file_name = "/" + self.userID + ".txt"
                 count = 0
-                while count < 3:
+                self.dbx.files_download_to_file(os.getcwd() +file_name, file_name)
+                f = open(file_name[1:len(file_name)], 'a+')
+                sock.sendto(msg, (device[1], device[2]))
+                time_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                f.write(time_now + " " + msg + "\n")
+                while count < 2:
                     sock.sendto(msg, (device[1], device[2]))
+                    time_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    f.write(time_now + " " + msg + "\n")
                     count += 1
+                # Delete file at dropbox
+                print "Deleting file at Dropbox"
+                print self.dbx.files_delete(file_name)
+                # Upload changes to file to DropBox
+                print "Sending file to Dropbox"
+                f.seek(0)
+                print f.read()
+                f.seek(0)
+                print self.dbx.files_upload(f.read(), file_name)
+                # Push notification to server
+                msg = "UPDATED " + self.userID
+                print "Sent ", self.send(msg), " to server"
+                # Delete local version of file
+                print "Removing local file from DropBox"
+                os.remove(os.getcwd() + file_name)
                 return True
 
-        print "Device not found, please query to maske sure alive"
+        print "Device not found, please query to make sure alive"
         return False
 
 

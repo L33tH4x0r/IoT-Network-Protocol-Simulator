@@ -23,7 +23,7 @@ class Server:
         self.clients = []
         # Open error log
         self.error_log = open('error.log', 'a')
-
+        self.dbx = dropbox.Dropbox('AaOxbynKDoAAAAAAAAAAfWGBFWKm5iRoD6nNXqnuKs_sfKxBPTLe3hTX_G_GVCE0')
 
     # COMMUNICATION ############################################################
     ############################################################################
@@ -51,6 +51,12 @@ class Server:
         elif command == "MSG":
             # Run the message handler
             return self.message(conn, parsed_data[1], parsed_data[2], parsed_data[3])
+        # elif command == "UPDATED":
+        #     # Run the message handler
+        #     # TODO :: Create a message that pings server when client updates to
+        #     # Dropbox. Create action to pull data from server. Create object to
+        #     # # store data from Dropbox.
+        #     # return self.message(conn, parsed_data[1], parsed_data[2])
 
     def send(self, conn, msg):
         # Print the message thats being sent
@@ -86,6 +92,12 @@ class Server:
 
         # Append new client to clients list
         self.clients.append(TrackedClients(device_id, mac_address, client_ip, client_port, conn))
+        # Create file for device to upload to
+        file_message = "DEVICE NAME: " + device_id + "\n\n"
+        file_name = "/"+device_id+".txt"
+        print "Uploading", file_name, " to dropbox"
+        print "Response from server:"
+        print self.dbx.files_upload(file_message, file_name)
         # send ack for register
         return self.new_device_ack(conn, device_id)
 

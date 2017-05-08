@@ -1,12 +1,10 @@
 NAME: AUSTIN TURNER
 CLASS: CPE.401
 
-FOR THIS SUBMISSION, THE FILE INCLUDES:  server.py, and client.py.
-
 To run the server.py file, type:
 $ server.py [server_ip] [server_port_number]
 
 To run client.py, type:
 $ client.py [user_id] [cleint_ip] [server_IP] [server_port]
 
-For this submission, I have cleaned up the code from last submission to include all of the requirements for the protocol. Additionally, I've implemented an asynchronous thread system for the server to handle clients. Also, I've implemented an asynchronous thread for clients to accept udp connections on. Lastly, I've setup the ability for clients to send pings to each other. I hwasn't able to implement sending system messages to each other however and the ACK isn't working quite right for UDP client to UDP Client
+For this submission, I created a DropBox account and registered an API key. I associated my server and my clients with this API key and used it to communicate with DropBox. Each client when they register with the server have a document created for them inside DropBox from the server. When clients want to communicate with each other, they download their file from DropBox and append the commands they're sending to the other client. After, they delete the existing file on the cloud and re-upload their file.
