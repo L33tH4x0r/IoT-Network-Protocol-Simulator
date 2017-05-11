@@ -4,6 +4,11 @@ import os
 import subprocess
 import dropbox
 import datetime
+import Crypto
+from Crypto.PublicKey import RSA
+from Crypto import Random
+import ast
+
 execfile( os.getcwd() + "/StreamSocket.py" )
 execfile( os.getcwd() + "/ClientThread.py" )
 class Client:
@@ -31,6 +36,33 @@ class Client:
         self.clientPort = self.client_socket.ssock.getsockname()[1]
         # Connect client to server
         self.client_socket.connect((server_IP, int(server_port)))
+
+        fail_count = 0
+        message = None
+        while fail_count < 3:
+            print "Waiting for server reply:"
+            ready = select.select([self.client_socket.ssock], [], [], 2)
+            if ready[0] :
+                message = self.client_socket.rec(self.client_socket)
+                print "recieved key from server"
+                break
+            else:
+                fail_count += 1
+
+        # Get public key from server
+        self.public_key = 16
+        if message:
+            self.server_public_key = RSA.importKey(message)
+            print self.server_public_key.exportKey()
+            # Create keys for client
+            self.key = RSA.generate(1024) #generate pub and priv key
+            self.publickey = self.key.publickey() # pub key export for exchange
+            public_key = self.publickey.exportKey()
+            print "Sending server public key"
+            self.client_socket.send(self.client_socket, public_key)
+        else:
+            print "server not responding"
+
         # Add MAC address of current machine
         self.mac = get_mac()
         # create error log
@@ -70,15 +102,15 @@ class Client:
         # Send message
         return self.send("DEREGISTER " + self.userID + " " + str(self.mac))
 
-    def message(self, to_id, send_message):
-        return self.send("MSG " + self.userID + " " + to_id + " " + send_message)
+    def message(self, send_message):
+        return self.send(send_message)
 
 
     # COMMUNICATION ############################################################
     ############################################################################
     def send(self, msg):
         print "Sending: ", msg
-        return self.client_socket.send(self.client_socket.ssock, msg)
+        return self.client_socket.send(self.client_socket.ssock, self.server_public_key.encrypt(msg, self.key)[0])
 
     def recieve_msg(self, msg):
         # Check if conneciton broken

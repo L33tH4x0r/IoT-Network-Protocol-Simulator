@@ -2,6 +2,10 @@ import threading
 import time
 import select
 import dropbox
+import Crypto
+from Crypto.PublicKey import RSA
+from Crypto import Random
+import ast
 
 class ServerThread(threading.Thread):
     def __init__(self, server, conn, addr):
@@ -17,6 +21,27 @@ class ServerThread(threading.Thread):
         # Start thread to handle recieving data
         print "Thread Created"
         print "Recieving Data from ", self.addr
+
+        public_key = server.publickey.exportKey()
+        print "Sending ", self.addr, " public key"
+        self.server.server_socket.send(conn, public_key)
+        fail_count = 0
+        message = None
+        while fail_count < 3:
+            print "Waiting for client reply:"
+            ready = select.select([self.server.server_socket.ssock], [], [], 10)
+            if ready[0] :
+                message = self.server.server_socket.rec(self.server.server_socket)
+                print "recieved key from client"
+                break
+            else:
+                fail_count += 1
+
+
+        # Get public key from client
+        if message:
+            client_public_key = RSA.importKey(message)
+            print self.client_public_key.exportKey()
 
         while not self.stopped():
             try:

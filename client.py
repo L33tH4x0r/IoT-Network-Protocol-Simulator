@@ -47,9 +47,7 @@ while True:
     print "Options to talk with server"
     print "<R>egister with server"
     print "<D>eregister with device"
-    print "<S>end Query to Device"
     print "Send <M>essage to Device"
-    print "<V>iew All Saved Queries"
     print "<Q>uit"
     # Get Input from user
     command = raw_input("-> ").upper()
@@ -65,68 +63,8 @@ while True:
         print "Sending Deregister command:\n"
         check_sent(client.deregister(), client.client_socket)
 
-    elif command == 'S':
-        # Prompt user for query command
-        print "Enter:"
-        print "(1) To get IP and Port number of a device"
-        print "(2) To check mailbox"
-        command = int(raw_input("-> "))
-        to_id = ""
-        if command == 1:
-            # Query user for device id
-            print "Enter the device id you want to connect to"
-            to_id = raw_input("-> ")
-            print ""
-        # send query to server
-        print "Sending Query Command\n"
-        check_sent(client.query(str(command), to_id), client.client_socket)
-
     elif command == 'M':
-        # Prompt user to determine message type
-        print "Message <M>ailbox"
-        print "Message <D>irectly"
-        mail_command = raw_input("-> ").upper()
-
-        if mail_command == "M":
-            # Prompt user for device id to message
-            print "Enter in the device ID you want to talk to:"
-            to_id = raw_input("-> ")
-            # Prompt user for message
-            print "Enter in the message you want to send"
-            message = raw_input("-> ")
-            # Send message to server
-            print "Sending Message Command"
-            check_sent(client.message(to_id, message), client.client_socket)
-
-        if mail_command == "D":
-            # Prompt user for message type
-            print "<T>raceroute Device"
-            print "<P>ing"
-
-            udp_message = raw_input("->").upper()
-
-            if udp_message == "T":
-                print "Enter in Device Name"
-                device_name = raw_input("->")
-
-                client.traceroute(device_name)
-
-            if udp_message == "P":
-                print "Enter in Device Name"
-                device_name = raw_input("->")
-
-                client.ping(device_name)
-
-
-    elif command == 'V':
-        if client.queried_devices:
-            print "\n"
-            for device in client.queried_devices:
-                print "Device ID: ", device[0]
-                print "Device IP: ", device[1]
-                print "Device Port: ", device[2], "\n"
-        else:
-            print "No devices currently queried"
+        check_sent(client.message(to_id, message), client.client_socket)
 
     elif command == 'Q':
         # Prompt user

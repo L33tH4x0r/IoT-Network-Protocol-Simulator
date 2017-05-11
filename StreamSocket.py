@@ -39,6 +39,7 @@ class StreamSocket:
         # Initialize sent counter
         totalsent = 0
         msg = msg + "@"
+        count = 0
         # Loop through message
         while totalsent < len(msg):
             try:
@@ -52,7 +53,12 @@ class StreamSocket:
                 # update the total sent
                 totalsent = totalsent + sent
             except Exception, e:
-                print "Waiting for client: "
+                if count < 15:
+                    print "Waiting for client: "
+                    count += 1
+                else:
+                    return False
+
 
     def rec(self, conn):
         # initialize msg buffer

@@ -3,6 +3,10 @@ from datetime import datetime
 import socket
 import threading
 import time
+import Crypto
+from Crypto.PublicKey import RSA
+from Crypto import Random
+import ast
 execfile( os.getcwd() + "/StreamSocket.py" )
 execfile(os.getcwd() + "/TrackedClients.py")
 
@@ -24,6 +28,9 @@ class Server:
         # Open error log
         self.error_log = open('error.log', 'a')
         self.dbx = dropbox.Dropbox('AaOxbynKDoAAAAAAAAAAfWGBFWKm5iRoD6nNXqnuKs_sfKxBPTLe3hTX_G_GVCE0')
+
+        self.key = RSA.generate(1024) #generate pub and priv key
+        self.publickey = self.key.publickey() # pub key export for exchange
 
     # COMMUNICATION ############################################################
     ############################################################################
